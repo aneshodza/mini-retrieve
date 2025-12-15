@@ -1,0 +1,7 @@
+/target
+
+/in/documents.all
+/in/documents.qry
+/in/qrel
+
+out/documents/doc*
