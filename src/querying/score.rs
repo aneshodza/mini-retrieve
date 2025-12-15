@@ -45,7 +45,12 @@ pub fn score(query: String, inverted_index: &InvertedIndex) -> HashMap<u32, f32>
 }
 
 fn score_component(tf_ij: f32, l_di: f32, avdl: f32) -> f32 {
-    (K1 + 1.0) * tf_ij / tf_ij + K1 * (1.0 - B + B * l_di / avdl)
+    let numerator = tf_ij * (K1 + 1.0);
+
+    let length_norm = 1.0 - B + B * (l_di / avdl);
+    let demoninator = tf_ij + K1 * length_norm;
+
+    numerator / demoninator
 }
 
 fn idf(df_j: u32, n: u32) -> f32 {

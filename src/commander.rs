@@ -1,7 +1,6 @@
 use crate::{
-    evaluation::query_extractor::extract_queries,
+    evaluation::{precision_calculator::mean_average_precision, query_extractor::extract_queries},
     preprocessing::{indexer, splitter, tokenizer::tokenize},
-    querying::score::score,
     types::InvertedIndex,
 };
 use std::path::PathBuf;
@@ -146,11 +145,9 @@ fn read_doc(args: Vec<&str>) -> bool {
 fn eval_queries(inverted_index: &InvertedIndex) -> bool {
     println!("🔬 Running evaluation...");
     let queries = extract_queries("in/documents.qry");
+    let map = mean_average_precision(queries, inverted_index);
+    println!("🦀 The MAP was calculated to be: {}", map);
 
-    for query in queries {
-        let _scores = score(query, &inverted_index);
-    }
-    println!("🔨 Scores were calculated, but the evaluation table is currently a TODO!");
     true
 }
 

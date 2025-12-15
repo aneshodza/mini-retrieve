@@ -1,21 +1,7 @@
 use std::{collections::HashSet, sync::OnceLock};
 
 static STOPWORDS_SET: OnceLock<HashSet<String>> = OnceLock::new();
-const STOPWORDS: &[&str] = &[ // This is a random list i found in a GitHub Gist
-    "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your",
-    "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her",
-    "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs",
-    "themselves", "what", "which", "who", "whom", "this", "that", "these", "those",
-    "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had",
-    "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if",
-    "or", "because", "as", "until", "while", "of", "at", "by", "for", "with", "about",
-    "against", "between", "into", "through", "during", "before", "after", "above",
-    "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under",
-    "again", "further", "then", "once", "here", "there", "when", "where", "why",
-    "how", "all", "any", "both", "each", "few", "more", "most", "other", "some",
-    "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very",
-    "s", "t", "can", "will", "just", "don", "should", "now",
-];
+const STOPWORDS_PATH: &str = "stopwords.txt";
 
 pub fn tokenize<T: AsRef<str>>(term: T) -> Option<String> {
     let mut token = term.as_ref().to_lowercase();
@@ -83,7 +69,14 @@ fn remove_double_letters(token: String) -> String {
 
 fn get_stopwords_set() -> &'static HashSet<String> {
     STOPWORDS_SET.get_or_init(|| {
-        STOPWORDS.into_iter().map(|s| s.to_string()).collect()
+        let contents = std::fs::read_to_string(STOPWORDS_PATH)
+            .expect("Failed to read stopwords file. Maybe the file is missing?");
+
+        contents
+            .lines()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| line.trim().to_lowercase())
+            .collect()
     })
 }
 
