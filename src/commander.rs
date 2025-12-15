@@ -1,5 +1,7 @@
 use crate::{
-    preprocessing::{indexer, splitter},
+    evaluation::query_extractor::extract_queries,
+    preprocessing::{indexer, splitter, tokenizer::tokenize},
+    querying::score::score,
     types::InvertedIndex,
 };
 use std::path::PathBuf;
@@ -12,6 +14,8 @@ pub fn commander(command: String, args: Vec<&str>, inverted_index: &mut Inverted
         "stats" => stats(inverted_index),
         "postings" => postings(args, inverted_index),
         "doc" => read_doc(args),
+        "eval" => eval_queries(&inverted_index),
+        "tokenize" => print_tokenized(args),
         _ => print_help(),
     }
 }
@@ -52,8 +56,12 @@ fn postings(args: Vec<&str>, inverted_index: &InvertedIndex) -> bool {
     } else {
         let term = args[0];
         println!("\n🔤 Postings for Term: \"{}\"", term);
+        let Some(token) = tokenize(term) else {
+            println!("⚠️ You have entered a stopword. That doesn't have any postings.");
+            return true;
+        };
 
-        if let Some(postings) = inverted_index.dictionary.get(term) {
+        if let Some(postings) = inverted_index.dictionary.get(&token) {
             println!("+--------+----------------------------------------------------+-------+");
             println!(
                 "| {:<6} | {:<50} | {:<5} |",
@@ -76,11 +84,13 @@ fn postings(args: Vec<&str>, inverted_index: &InvertedIndex) -> bool {
                 } else {
                     title.to_string()
                 };
-
                 println!("| {:<6} | {:<50} | {:<5} |", doc_id, display_title, tf);
             }
             println!("+--------+----------------------------------------------------+-------+");
-            println!("ℹ️ Total occurrences found in {} documents.", postings.len());
+            println!(
+                "ℹ️ Total occurrences found in {} documents.",
+                postings.len()
+            );
         } else {
             println!("Term \"{}\" was not found in the index dictionary.", term);
         }
@@ -133,6 +143,32 @@ fn read_doc(args: Vec<&str>) -> bool {
     true
 }
 
+fn eval_queries(inverted_index: &InvertedIndex) -> bool {
+    println!("🔬 Running evaluation...");
+    let queries = extract_queries("in/documents.qry");
+
+    for query in queries {
+        let _scores = score(query, &inverted_index);
+    }
+    println!("🔨 Scores were calculated, but the evaluation table is currently a TODO!");
+    true
+}
+
+fn print_tokenized(args: Vec<&str>) -> bool {
+    let mut tokens: Vec<String> = Vec::new();
+    for term in args {
+        if let Some(token) = tokenize(term) {
+            tokens.push(token);
+        }
+    }
+    if tokens.len() > 0 {
+        println!("🪙 Tokenized sequence: {}", tokens.join(" "));
+    } else {
+        println!("✂️ Sequence only had stopwords!");
+    }
+    true
+}
+
 fn print_help() -> bool {
     println!("📖 Available commands:");
     println!("   ::help                - Show this help message");
@@ -141,6 +177,8 @@ fn print_help() -> bool {
     println!("   ::stats               - Show statistics about the inverted index");
     println!("   ::postings <term>     - Show postings list for a term");
     println!("   ::doc <ID>            - Display the content of a document by its ID");
+    println!("   ::eval                - Run predefined test queries with relevance list");
+    println!("   ::tokenize <terms>    - Stem a sequence of terms");
 
     true
 }

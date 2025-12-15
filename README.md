@@ -15,6 +15,13 @@ Mini-Retrieve implements the complete IR pipeline from corpus ingestion to ranke
 * **Metadata:** Stores essential global statistics (`n`, `avdl`) and per-document metadata (lengths and titles) within the `InvertedIndex` structure.
 * **Document Handling:** Documents are processed from a tagged format (like Cranfield/CACM) by splitting them into individual files and extracting the document title (`.T` tag).
 
+### Stemming and Stopword Filtering
+* **Stemming**: The terms get stemmed, as to merge similar terms using following methods:
+    * **Remove Plural**: This removes certain plural suffixes (e.g. "ies" --> "y")
+    * **Remove Affix**: This removes certain affixes (e.g. "ing" --> 🚫)
+    * **Remove Double Letters**: This removes double-lettered suffixes which are often left over from affix removal (e.g. "runn" -> "run")
+* **Tokenization**: Certain terms with low informational value get removed.
+
 ### Retrieval and Ranking
 * **BM25 Algorithm:** Implements the Okapi BM25 ranking function for relevance scoring.
 * **Query Processing:** All query terms are consistently tokenized and lowercased to ensure accurate matching against the index.
@@ -58,7 +65,7 @@ The system operates in an interactive loop. You can enter natural language queri
 ### Example Query
 ```
 🔍 Enter your Query:
-information retrieval system
+Information Retrieval Systems
 ⏳ Searching...
 
 +------------------------------------------------------------------------------------------+
@@ -86,12 +93,14 @@ Commands must be prefixed with `::`.
 
 | Command | Description |
 | :--- | :--- |
-| `::help` | Displays the list of available commands. | |
-| `::reindex` | Rebuilds the inverted index from the source corpus. | |
-| `::stats` | Shows index statistics (Total Docs, Total Terms, Avg. Doc Length). | |
-| `::postings <term>` | Displays the postings list (Doc ID, Title, TF) for a specific term. | |
-| `::doc <ID>` | Displays the raw content of a document by its ID. | |
-| `::exit` | Exits the application. | |
+| `::help` | Displays the list of available commands. |
+| `::reindex` | Rebuilds the inverted index from the source corpus. |
+| `::stats` | Shows index statistics (Total Docs, Total Terms, Avg. Doc Length). |
+| `::postings <term>` | Displays the postings list (Doc ID, Title, TF) for a specific term. |
+| `::doc <ID>` | Displays the raw content of a document by its ID. |
+| `::eval` | Evaluates the Precision and recall |
+| `::tokenize <terms>` | Tokenizes the sequence of terms passed and prints the result |
+| `::exit` | Exits the application. |
 
 ---
 

@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
+    preprocessing::tokenizer::tokenize,
     types::{DocId, InvertedIndex},
     utils::calculate_document_tf,
 };
@@ -16,22 +17,27 @@ pub fn score(query: String, inverted_index: &InvertedIndex) -> HashMap<u32, f32>
     let mut scores: HashMap<DocId, f32> = HashMap::new();
 
     qtf_map.iter().for_each(|(term, _qtf)| {
-        let formatted_term = term.to_lowercase();
-        match inverted_index.dictionary.get(&formatted_term) {
-            Some(postings) => {
-                let df_j = postings.len() as u32;
-                let idf_j = idf(df_j, n);
+        if let Some(token) = tokenize(term) {
+            match inverted_index.dictionary.get(&token) {
+                Some(postings) => {
+                    let df_j = postings.len() as u32;
+                    let idf_j = idf(df_j, n);
 
-                for posting in postings {
-                    let doc_id = posting.doc_id;
-                    let tf_ij = posting.tf as f32;
-                    let l_di = inverted_index.doc_lengths.get(&doc_id).copied().unwrap_or(0) as f32;
+                    for posting in postings {
+                        let doc_id = posting.doc_id;
+                        let tf_ij = posting.tf as f32;
+                        let l_di = inverted_index
+                            .doc_lengths
+                            .get(&doc_id)
+                            .copied()
+                            .unwrap_or(0) as f32;
 
-                    let score = idf_j * score_component(tf_ij, l_di, avdl);
-                    *scores.entry(doc_id).or_insert(0.0) += score;
+                        let score = idf_j * score_component(tf_ij, l_di, avdl);
+                        *scores.entry(doc_id).or_insert(0.0) += score;
+                    }
                 }
+                None => {}
             }
-            None => {}
         }
     });
 

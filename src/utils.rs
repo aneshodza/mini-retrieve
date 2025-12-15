@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::types::{DocId, InvertedIndex, Term};
+use crate::{preprocessing::tokenizer::tokenize, types::{DocId, InvertedIndex, Term}};
 
 const MAX_TITLE_WIDTH: usize = 70;
 
@@ -9,10 +9,11 @@ pub fn calculate_document_tf(content: &str) -> (HashMap<Term, u32>, u32) {
     let mut tf_map: HashMap<Term, u32> = HashMap::new();
 
     content.split_whitespace().for_each(|token| {
-        doc_length += 1;
-        let normalized_token = token.to_lowercase();
-        let counter = tf_map.entry(normalized_token).or_insert(0);
-        *counter += 1;
+        if let Some(normalized_token) = tokenize(token) {
+            doc_length += 1;
+            let counter = tf_map.entry(normalized_token).or_insert(0);
+            *counter += 1;
+        }
     });
 
     (tf_map, doc_length)
@@ -35,7 +36,7 @@ pub fn display_top_results(scores: HashMap<DocId, f32>, index: &InvertedIndex) {
     );
     println!("+----------+------------------------------------------------------------------------+------------+");
 
-    for (rank, (doc_id, score)) in ranked_results.iter().take(10).enumerate() {
+    for (_rank, (doc_id, score)) in ranked_results.iter().take(10).enumerate() {
         let title = index
             .doc_titles
             .get(doc_id)

@@ -1,6 +1,6 @@
 use std::{collections::HashMap, fs, path::Path};
 
-use crate::{types::{DocId, InvertedIndex, Posting, Term}, utils::{calculate_document_tf, extract_title_from_content}};
+use crate::{preprocessing::tokenizer::tokenize, types::{DocId, InvertedIndex, Posting, Term}, utils::{calculate_document_tf, extract_title_from_content}};
 
 pub fn create_inverted_index() -> InvertedIndex {
     println!("> Creating inverted index");
@@ -76,10 +76,12 @@ fn update_inverted_index(
     tf_map: HashMap<Term, u32>,
 ) {
     tf_map.into_iter().for_each(|(term, tf)| {
+        if let Some(token) = tokenize(term) {
         inverted_index
             .dictionary
-            .entry(term.to_string())
+            .entry(token)
             .or_insert_with(Vec::new)
             .push(Posting::new(doc_id, tf));
+        }
     });
 }
