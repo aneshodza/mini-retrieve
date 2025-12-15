@@ -37,6 +37,6 @@ fn main() {
         let duration = end_time.duration_since(start_time);
 
         display_top_results(scores, &inverted_index);
-        println!("({:.2?}ms)", duration.as_millis());
+        println!("({:?})", duration);
     }
 }
