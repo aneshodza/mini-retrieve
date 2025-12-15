@@ -10,24 +10,24 @@ The system is designed for speed, achieving near sub-millisecond query latency t
 
 Mini-Retrieve implements the complete IR pipeline from corpus ingestion to ranked results display:
 
-### Indexing and Storage
+### 📀 Indexing and Storage
 * **Inverted Index:** Uses an efficient `HashMap` structure to store postings lists, which include Document ID (`DocId`) and Term Frequency (`tf`).
 * **Metadata:** Stores essential global statistics (`n`, `avdl`) and per-document metadata (lengths and titles) within the `InvertedIndex` structure.
 * **Document Handling:** Documents are processed from a tagged format (like Cranfield/CACM) by splitting them into individual files and extracting the document title (`.T` tag).
 
-### Stemming and Stopword Filtering
+### 🪙 Tokenization
 * **Stemming**: The terms get stemmed, as to merge similar terms using following methods:
     * **Remove Plural**: This removes certain plural suffixes (e.g. "ies" --> "y")
     * **Remove Affix**: This removes certain affixes (e.g. "ing" --> 🚫)
     * **Remove Double Letters**: This removes double-lettered suffixes which are often left over from affix removal (e.g. "runn" -> "run")
-* **Tokenization**: Certain terms with low informational value get removed.
+* **Stopword Filtering**: Certain terms with low informational value get removed.
 
-### Retrieval and Ranking
+### 🥇 Retrieval and Ranking
 * **BM25 Algorithm:** Implements the Okapi BM25 ranking function for relevance scoring.
 * **Query Processing:** All query terms are consistently tokenized and lowercased to ensure accurate matching against the index.
 * **Performance Measurement:** The query time is measured using `std::time::Instant` and reported for benchmarking.
 
-### User Interface
+### 🏋️ User Interface
 * **Interactive CLI:** Features an interactive command loop that supports queries and administrative commands prefixed with `::` (e.g., `::stats`, `::postings`).
 * **Formatted Results:** Displays the top 10 search results in a clean, readable table including the document title and calculated BM25 score.
 
@@ -87,7 +87,7 @@ Information Retrieval Systems
 (73.583µs)
 ```
 
-### Administrative Commands
+### ⚙️ Administrative Commands
 
 Commands must be prefixed with `::`.
 
