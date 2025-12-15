@@ -61,22 +61,22 @@ The system operates in an interactive loop. You can enter natural language queri
 information retrieval system
 ⏳ Searching...
 
-+------------------------------------------------------------------------------------------------+
-|                                       🎉 Top 10 Results                                        |
-+----------+------------------------------------------------------------------------+------------+
-|  Doc ID  | Document Title                                                         |   Score    |
-+----------+------------------------------------------------------------------------+------------+
-|   961    | compressible two dimensional jet mixing at constant                    |    22.0917 |
-|   798    | interaction between shock waves and boundary layers, with a note on... |    20.1529 |
-|   1040   | on transverse vibrations of thin, shallow elastic shells               |    17.3793 |
-|   1147   | heat transfer to bodies traveling at high speed in the upper           |    14.7801 |
-|   1047   | the bending strength of pressurized cylinders                          |    13.9809 |
-|   164    | an approximate analytical method for studying entry                    |    13.8062 |
-|   187    | investigation of separated flows in supersonic and subsonic            |    13.7083 |
-|    96    | review of published data on the effect of roughness on transition from |    13.4636 |
-|   199    | measurement of two dimensional derivatives on a wing-aileron-tab       |    13.3852 |
-|   441    | evaluation of high angle-of-attack aerodynamic derivative              |    13.3820 |
-+----------+------------------------------------------------------------------------+------------+
++------------------------------------------------------------------------------------------+
+|                                    🎉 Top 10 Results                                     |
++----------+------------------------------------------------------------------+------------+
+|  Doc ID  | Document Title                                                   |   Score    |
++----------+------------------------------------------------------------------+------------+
+|   961    | compressible two dimensional jet mixing at constant              |    22.0917 |
+|   798    | interaction between shock waves and boundary layers, with a note |    20.1529 |
+|   1040   | on transverse vibrations of thin, shallow elastic shells         |    17.3793 |
+|   1147   | heat transfer to bodies traveling at high speed in the upper     |    14.7801 |
+|   1047   | the bending strength of pressurized cylinders                    |    13.9809 |
+|   164    | an approximate analytical method for studying entry              |    13.8062 |
+|   187    | investigation of separated flows in supersonic and subsonic      |    13.7083 |
+|    96    | review of published data on the effect of roughness on transition|    13.4636 |
+|   199    | measurement of two dimensional derivatives on a wing-aileron-tab |    13.3852 |
+|   441    | evaluation of high angle-of-attack aerodynamic derivative        |    13.3820 |
++----------+------------------------------------------------------------------+------------+
 (73.583µs)
 ```
 
