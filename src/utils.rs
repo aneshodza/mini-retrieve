@@ -55,7 +55,7 @@ pub fn display_top_results(scores: HashMap<DocId, f32>, index: &InvertedIndex) {
     );
     println!("+----------+------------------------------------------------------------------------+------------+");
 
-    for (_rank, (doc_id, score)) in ranked_results.iter().take(100).enumerate() {
+    for (_rank, (doc_id, score)) in ranked_results.iter().take(10).enumerate() {
         let title = index
             .doc_titles
             .get(doc_id)
