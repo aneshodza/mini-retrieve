@@ -79,9 +79,7 @@ fn update_inverted_index(
     doc_id: DocId,
     tf_map: HashMap<Term, u32>,
 ) {
-    tf_map.into_iter().for_each(|(term, tf)| {
-        if let Some(token) = tokenize(term) {
-            inverted_index.add_posting(token, Posting::new(doc_id, tf));
-        }
+    tf_map.into_iter().for_each(|(token, tf)| {
+        inverted_index.add_posting(token, Posting::new(doc_id, tf));
     });
 }
