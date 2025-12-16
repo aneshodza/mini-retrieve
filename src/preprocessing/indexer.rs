@@ -1,7 +1,6 @@
 use std::{collections::HashMap, fs, path::Path};
 
 use crate::{
-    preprocessing::tokenizer::tokenize,
     types::{DocId, InvertedIndex, Posting, Term},
     utils::{calculate_document_tf, extract_title_from_content},
 };
