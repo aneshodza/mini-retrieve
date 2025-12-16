@@ -16,6 +16,7 @@ Mini-Retrieve implements the complete IR pipeline from corpus ingestion to ranke
 * **Document Handling:** Documents are processed from a tagged format (like Cranfield/CACM) by splitting them into individual files and extracting the document title (`.T` tag).
 
 ### 🪙 Tokenization
+* **Special Character Removal**: Removes special characters from terms.
 * **Stemming**: The terms get stemmed, as to merge similar terms using following methods:
     * **Remove Plural**: This removes certain plural suffixes (e.g. "ies" --> "y")
     * **Remove Affix**: This removes certain affixes (e.g. "ing" --> 🚫)

@@ -1,6 +1,7 @@
 use crate::{
     evaluation::{precision_calculator::mean_average_precision, query_extractor::extract_queries},
     preprocessing::{indexer, splitter, tokenizer::tokenize},
+    querying::score::idf,
     types::InvertedIndex,
 };
 use std::path::PathBuf;
@@ -12,8 +13,9 @@ pub fn commander(command: String, args: Vec<&str>, inverted_index: &mut Inverted
         "reindex" => index_build(inverted_index),
         "stats" => stats(inverted_index),
         "postings" => postings(args, inverted_index),
+        "commons" => commons(inverted_index, args),
         "doc" => read_doc(args),
-        "eval" => eval_queries(&inverted_index),
+        "eval" => eval_queries(inverted_index),
         "tokenize" => print_tokenized(args),
         _ => print_help(),
     }
@@ -97,6 +99,49 @@ fn postings(args: Vec<&str>, inverted_index: &InvertedIndex) -> bool {
     true
 }
 
+
+fn commons(inverted_index: &InvertedIndex, args: Vec<&str>) -> bool {
+    let mut count: u32 = 10;
+    if !args.is_empty() {
+        count = args[0].parse::<u32>().unwrap_or(10);
+    }
+    let mut term_stats: Vec<(&String, usize)> = inverted_index
+        .dictionary
+        .iter()
+        .map(|(term, postings)| (term, postings.len()))
+        .collect();
+
+    term_stats.sort_by(|a, b| b.1.cmp(&a.1));
+
+    let n = inverted_index.n;
+
+    println!("+---------------------------------------------------------+");
+    println!("| 🏆 Top {:<3} Most Common Terms by Document Frequency (df) |", count);
+    println!("+-------------------------+--------------------+----------+");
+    println!(
+        "| {:<23} | {:<18} | {:<8} |",
+        "Term (Stem)", "Doc Frequency (df)", "IDF"
+    );
+    println!("+-------------------------+--------------------+----------+");
+
+    for (term, df) in term_stats.iter().take(count as usize) {
+        let idf_score = idf(*df as u32, n);
+        let display_idf = format!("{:.4}", idf_score);
+
+        println!("| {:<23} | {:<18} | {:<8} |", term, df, display_idf);
+    }
+
+    println!("+-------------------------+--------------------+----------+");
+
+    println!("\nℹ️ Total Documents (N): {}", n);
+    println!(
+        "ℹ️ Average Document Length (AVDL): {:.2}",
+        inverted_index.avdl
+    );
+
+    true
+}
+
 fn read_doc(args: Vec<&str>) -> bool {
     if args.is_empty() {
         println!("⚠️ Usage: ::doc <ID>");
@@ -173,6 +218,7 @@ fn print_help() -> bool {
     println!("   ::reindex             - Rebuild the inverted index");
     println!("   ::stats               - Show statistics about the inverted index");
     println!("   ::postings <term>     - Show postings list for a term");
+    println!("   ::commons <n>         - Shows n most common postings");
     println!("   ::doc <ID>            - Display the content of a document by its ID");
     println!("   ::eval                - Run predefined test queries with relevance list");
     println!("   ::tokenize <terms>    - Stem a sequence of terms");

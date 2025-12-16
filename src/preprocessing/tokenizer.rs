@@ -5,9 +5,16 @@ const STOPWORDS_PATH: &str = "stopwords.txt";
 
 pub fn tokenize<T: AsRef<str>>(term: T) -> Option<String> {
     let mut token = term.as_ref().to_lowercase();
+    if token.is_empty() {
+        return None;
+    }
+
+    token = remove_specials(token);
+
     if is_stopword(&token) {
         return None;
     }
+
     token = stem(token);
     Some(token)
 }
@@ -22,6 +29,13 @@ fn stem(token: String) -> String {
     token = remove_affix(token);
     token = remove_double_letters(token);
     token 
+}
+
+fn remove_specials(token: String) -> String {
+    let mut token = token;
+
+    token.retain(|c| c.is_alphanumeric());
+    token
 }
 
 fn remove_plural(token: String) -> String {

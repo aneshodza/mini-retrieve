@@ -53,9 +53,9 @@ fn score_component(tf_ij: f32, l_di: f32, avdl: f32) -> f32 {
     numerator / demoninator
 }
 
-fn idf(df_j: u32, n: u32) -> f32 {
+pub fn idf(df_j: u32, n: u32) -> f32 {
     let dividend = (n - df_j) as f32 + 0.5;
     let divisor = df_j as f32 + 0.5;
 
-    (dividend / divisor).ln()
+    (dividend / divisor).ln().max(0.0)
 }

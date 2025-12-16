@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap};
 
 use crate::{preprocessing::tokenizer::tokenize, types::{DocId, InvertedIndex, Term}};
 
@@ -8,7 +8,8 @@ pub fn calculate_document_tf(content: &str) -> (HashMap<Term, u32>, u32) {
     let mut doc_length: u32 = 0;
     let mut tf_map: HashMap<Term, u32> = HashMap::new();
 
-    content.split_whitespace().for_each(|token| {
+    let searchable_content = extract_searchable_content(content);
+    searchable_content.split_whitespace().for_each(|token| {
         if let Some(normalized_token) = tokenize(token) {
             doc_length += 1;
             let counter = tf_map.entry(normalized_token).or_insert(0);
@@ -17,6 +18,24 @@ pub fn calculate_document_tf(content: &str) -> (HashMap<Term, u32>, u32) {
     });
 
     (tf_map, doc_length)
+}
+
+fn extract_searchable_content(content: &str) -> String {
+    let mut result = String::new();
+    let mut collecting = true;
+
+    for line in content.lines() {
+        if line.starts_with(".T") || line.starts_with(".W") {
+            collecting = true;
+        } else if line.starts_with(".I") || line.starts_with(".A") || line.starts_with(".B") {
+            collecting = false;
+        } else if collecting {
+            result.push_str(line.trim());
+            result.push(' ');
+        }
+    }
+
+    result
 }
 
 pub fn display_top_results(scores: HashMap<DocId, f32>, index: &InvertedIndex) {
@@ -36,7 +55,7 @@ pub fn display_top_results(scores: HashMap<DocId, f32>, index: &InvertedIndex) {
     );
     println!("+----------+------------------------------------------------------------------------+------------+");
 
-    for (_rank, (doc_id, score)) in ranked_results.iter().take(10).enumerate() {
+    for (_rank, (doc_id, score)) in ranked_results.iter().take(100).enumerate() {
         let title = index
             .doc_titles
             .get(doc_id)

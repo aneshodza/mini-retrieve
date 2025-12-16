@@ -1,8 +1,9 @@
 use std::collections::HashMap;
 
-use crate::types::{DocId, Term};
+use crate::types::DocId;
 
 #[derive(Debug)]
+#[derive(Clone)]
 pub struct Posting {
     pub doc_id: DocId,
     pub tf: u32,
@@ -10,7 +11,7 @@ pub struct Posting {
 
 #[derive(Debug)]
 pub struct InvertedIndex {
-    pub dictionary: HashMap<Term, Vec<Posting>>,
+    pub dictionary: HashMap<String, Vec<Posting>>,
 
     pub doc_lengths: HashMap<DocId, u32>,
     pub doc_titles: HashMap<DocId, String>,
@@ -38,9 +39,9 @@ impl InvertedIndex {
         }
     }
 
-    pub fn add_posting(&mut self, term: Term, posting: Posting) {
+    pub fn add_posting(&mut self, token: String, posting: Posting) {
         self.dictionary
-            .entry(term)
+            .entry(token)
             .or_insert_with(Vec::new)
             .push(posting);
     }
