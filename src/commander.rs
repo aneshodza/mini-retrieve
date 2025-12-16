@@ -4,8 +4,8 @@ use crate::{
     querying::score::idf,
     types::InvertedIndex,
 };
-use std::path::PathBuf;
 use std::{cmp::max, fs};
+use std::{collections::HashSet, path::PathBuf};
 
 pub fn commander(command: String, args: Vec<&str>, inverted_index: &mut InvertedIndex) -> bool {
     match command.as_str() {
@@ -15,7 +15,7 @@ pub fn commander(command: String, args: Vec<&str>, inverted_index: &mut Inverted
         "postings" => postings(args, inverted_index),
         "commons" => commons(inverted_index, args),
         "doc" => read_doc(args),
-        "eval" => eval_queries(inverted_index),
+        "eval" => eval_queries(inverted_index, args),
         "tokenize" => print_tokenized(args),
         _ => print_help(),
     }
@@ -99,7 +99,6 @@ fn postings(args: Vec<&str>, inverted_index: &InvertedIndex) -> bool {
     true
 }
 
-
 fn commons(inverted_index: &InvertedIndex, args: Vec<&str>) -> bool {
     let mut count: u32 = 10;
     if !args.is_empty() {
@@ -116,7 +115,10 @@ fn commons(inverted_index: &InvertedIndex, args: Vec<&str>) -> bool {
     let n = inverted_index.n;
 
     println!("+---------------------------------------------------------+");
-    println!("| 🏆 Top {:<3} Most Common Terms by Document Frequency (df) |", count);
+    println!(
+        "| 🏆 Top {:<3} Most Common Terms by Document Frequency (df) |",
+        count
+    );
     println!("+-------------------------+--------------------+----------+");
     println!(
         "| {:<23} | {:<18} | {:<8} |",
@@ -187,11 +189,31 @@ fn read_doc(args: Vec<&str>) -> bool {
     true
 }
 
-fn eval_queries(inverted_index: &InvertedIndex) -> bool {
+fn eval_queries(inverted_index: &InvertedIndex, args: Vec<&str>) -> bool {
     println!("🔬 Running evaluation...");
-    let queries = extract_queries("in/documents.qry");
+    let mut queries = extract_queries("in/documents.qry");
+    if args.len() > 0 {
+        let qids: HashSet<u32> = args
+            .iter()
+            .filter_map(|s| s.parse::<u32>().ok())
+            .collect::<Vec<u32>>()
+            .into_iter()
+            .collect();
+
+        println!(
+            "ℹ️ Evaluating only queries with IDs: {:?}",
+            qids.iter().collect::<Vec<&u32>>()
+        );
+
+        queries = queries
+            .into_iter()
+            .filter(|(query_id, _query_string)| qids.contains(query_id))
+            .collect();
+    } else {
+        println!("ℹ️ Evaluating all queries as no specific IDs were provided.");
+    }
     let map = mean_average_precision(queries, inverted_index);
-    println!("🦀 The MAP was calculated to be: {}", map);
+    println!("\n🦀 The MAP was calculated to be: {}", map);
 
     true
 }

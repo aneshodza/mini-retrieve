@@ -31,8 +31,10 @@ fn average_precision(query: DocId, scores: HashMap<DocId, f32>) -> f32 {
 
     ranked_results.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
 
-    for (rank, (doc_id, _score)) in ranked_results.iter().enumerate() {
+    println!("\nEvaluating Query ID {}:", query);
+    for (rank, (doc_id, score)) in ranked_results.iter().enumerate() {
         if relevance_set.contains(doc_id) {
+            println!("      Hit: Rank #{} ID {} with score {}", rank, doc_id, score);
             found += 1;
             running_sum += found as f32 / (rank + 1) as f32;
 
