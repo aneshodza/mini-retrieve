@@ -9,10 +9,10 @@ pub fn calculate_document_tf(content: &str) -> (HashMap<Term, u32>, u32) {
     let mut tf_map: HashMap<Term, u32> = HashMap::new();
 
     let searchable_content = extract_searchable_content(content);
-    searchable_content.split_whitespace().for_each(|token| {
-        if let Some(normalized_token) = tokenize(token) {
+    searchable_content.split_whitespace().for_each(|term| {
+        if let Some(token) = tokenize(term) {
             doc_length += 1;
-            let counter = tf_map.entry(normalized_token).or_insert(0);
+            let counter = tf_map.entry(token).or_insert(0);
             *counter += 1;
         }
     });

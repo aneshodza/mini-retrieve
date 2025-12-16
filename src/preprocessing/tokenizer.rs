@@ -5,11 +5,11 @@ const STOPWORDS_PATH: &str = "stopwords.txt";
 
 pub fn tokenize<T: AsRef<str>>(term: T) -> Option<String> {
     let mut token = term.as_ref().to_lowercase();
+    token = remove_specials(token);
+
     if token.is_empty() {
         return None;
     }
-
-    token = remove_specials(token);
 
     if is_stopword(&token) {
         return None;
