@@ -236,14 +236,32 @@ fn print_tokenized(args: Vec<&str>) -> bool {
 fn print_help() -> bool {
     println!("📖 Available commands:");
     println!("   ::help                - Show this help message");
+    println!("                           Example:    ::help");
+    println!("");
     println!("   ::exit                - Exit the application");
+    println!("                           Example:    ::exit");
+    println!("");
     println!("   ::reindex             - Rebuild the inverted index");
+    println!("                           Example:    ::reindex");
+    println!("");
     println!("   ::stats               - Show statistics about the inverted index");
+    println!("                           Example:    ::stats");
+    println!("");
     println!("   ::postings <term>     - Show postings list for a term");
+    println!("                           Example:    ::postings computers");
+    println!("");
     println!("   ::commons <n>         - Shows n most common postings");
+    println!("                           Example:    ::commons 15");
+    println!("");
     println!("   ::doc <ID>            - Display the content of a document by its ID");
-    println!("   ::eval                - Run predefined test queries with relevance list");
+    println!("                           Example:    ::doc 42");
+    println!("");
+    println!("   ::eval <IDs>          - Run predefined test queries with relevance list.");
+    println!("                           Param specifies which queries are ran, if left empty all are ran.");
+    println!("                           Example:    ::eval 1 3 5 10");
+    println!("");
     println!("   ::tokenize <terms>    - Stem a sequence of terms");
+    println!("                           Example:    ::tokenize The quick brown fox");
 
     true
 }

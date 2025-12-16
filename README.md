@@ -99,8 +99,8 @@ Commands must be prefixed with `::`.
 | `::stats` | Shows index statistics (Total Docs, Total Terms, Avg. Doc Length). |
 | `::postings <term>` | Displays the postings list (Doc ID, Title, TF) for a specific term. |
 | `::doc <ID>` | Displays the raw content of a document by its ID. |
-| `::eval` | Evaluates the Precision and recall |
-| `::tokenize <terms>` | Tokenizes the sequence of terms passed and prints the result |
+| `::eval <IDs>` | Evaluates the Precision and recall of specified queries. |
+| `::tokenize <terms>` | Tokenizes the sequence of terms passed and prints the result. |
 | `::exit` | Exits the application. |
 
 ---
