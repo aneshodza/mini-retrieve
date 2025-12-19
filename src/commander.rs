@@ -61,6 +61,7 @@ fn postings(args: Vec<&str>, inverted_index: &InvertedIndex) -> bool {
             println!("⚠️ You have entered a stopword. That doesn't have any postings.");
             return true;
         };
+        println!("🪙 Tokenized Form: \"{}\"\n", token);
 
         if let Some(postings) = inverted_index.dictionary.get(&token) {
             println!("+--------+----------------------------------------------------+-------+");

@@ -76,7 +76,7 @@ fn get_relevance_set(query: DocId) -> (HashSet<DocId>, u32) {
             Err(_) => continue,
         };
 
-        if grade >= 2 {
+        if grade >= 1 && grade <= 3 {
             relevant_count += 1;
             relevant_docs.insert(doc_id);
         }
